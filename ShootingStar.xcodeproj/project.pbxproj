@@ -10,9 +10,10 @@
 		301D6B481C28B0C200B67764 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 301D6B471C28B0C200B67764 /* main.m */; };
 		301D6B4B1C28B0C200B67764 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 301D6B4A1C28B0C200B67764 /* AppDelegate.m */; };
 		301D6B4E1C28B0C200B67764 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 301D6B4D1C28B0C200B67764 /* ViewController.m */; };
-		301D6B511C28B0C200B67764 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 301D6B4F1C28B0C200B67764 /* Main.storyboard */; };
 		301D6B531C28B0C200B67764 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 301D6B521C28B0C200B67764 /* Assets.xcassets */; };
 		301D6B561C28B0C200B67764 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 301D6B541C28B0C200B67764 /* LaunchScreen.storyboard */; };
+		301D6B5F1C28FF5200B67764 /* DotParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 301D6B5D1C28FF5200B67764 /* DotParticle.sks */; };
+		301D6B601C28FF5200B67764 /* StarParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 301D6B5E1C28FF5200B67764 /* StarParticle.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,10 +23,11 @@
 		301D6B4A1C28B0C200B67764 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		301D6B4C1C28B0C200B67764 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		301D6B4D1C28B0C200B67764 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		301D6B501C28B0C200B67764 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		301D6B521C28B0C200B67764 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		301D6B551C28B0C200B67764 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		301D6B571C28B0C200B67764 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		301D6B5D1C28FF5200B67764 /* DotParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DotParticle.sks; sourceTree = "<group>"; };
+		301D6B5E1C28FF5200B67764 /* StarParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = StarParticle.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,11 +60,12 @@
 		301D6B451C28B0C200B67764 /* ShootingStar */ = {
 			isa = PBXGroup;
 			children = (
+				301D6B5D1C28FF5200B67764 /* DotParticle.sks */,
+				301D6B5E1C28FF5200B67764 /* StarParticle.sks */,
 				301D6B491C28B0C200B67764 /* AppDelegate.h */,
 				301D6B4A1C28B0C200B67764 /* AppDelegate.m */,
 				301D6B4C1C28B0C200B67764 /* ViewController.h */,
 				301D6B4D1C28B0C200B67764 /* ViewController.m */,
-				301D6B4F1C28B0C200B67764 /* Main.storyboard */,
 				301D6B521C28B0C200B67764 /* Assets.xcassets */,
 				301D6B541C28B0C200B67764 /* LaunchScreen.storyboard */,
 				301D6B571C28B0C200B67764 /* Info.plist */,
@@ -137,8 +140,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				301D6B561C28B0C200B67764 /* LaunchScreen.storyboard in Resources */,
+				301D6B601C28FF5200B67764 /* StarParticle.sks in Resources */,
+				301D6B5F1C28FF5200B67764 /* DotParticle.sks in Resources */,
 				301D6B531C28B0C200B67764 /* Assets.xcassets in Resources */,
-				301D6B511C28B0C200B67764 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,14 +162,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		301D6B4F1C28B0C200B67764 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				301D6B501C28B0C200B67764 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		301D6B541C28B0C200B67764 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -298,6 +294,7 @@
 				301D6B5C1C28B0C200B67764 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
