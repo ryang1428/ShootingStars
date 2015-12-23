@@ -63,15 +63,7 @@
     return self;
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)fireTouched:(id)sender {
-    [self shootOffSpriteKitStarFromView:sender];
-}
-
+// Sprite Kit Example
 - (void)shootOffSpriteKitStarFromView:(UIView *)view {
     CGPoint viewOrigin;
     
@@ -136,6 +128,9 @@
     [self.view addSubview:containerView];
 }
 
+
+
+// Core Animation Example
 - (void)shootOffCoreAnimationStarFromView:(UIView *)view {
     self.caStarImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"filled_star"]];
     self.caStarImageView.alpha = 1.0f;
@@ -239,7 +234,7 @@
     return (((float) rand() / RAND_MAX) * diff) + low;
 }
 
-#pragma mark - Delegate
+#pragma mark - CAAnimationGroup Delegate
 - (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished {
     if (finished) {
         // stop emitting particles, and wait a couple seconds so they all have time to disappear
