@@ -7,13 +7,20 @@
 //
 
 #define SCREEN_SCALE [[UIScreen mainScreen] scale]
+#define DEGREES_TO_RADIANS(angle) ((angle) / 180.0 * M_PI)
 
 #import "ViewController.h"
 #import <SpriteKit/SpriteKit.h>
 
 @interface ViewController ()
 
-@property (nonatomic, strong) UIButton *fireButton;
+// Sprite Kit
+@property (nonatomic, strong) UIButton *fireSpriteKitButton;
+@property (nonatomic, strong) UIButton *fireCoreAnimationButton;
+
+//Core Animation
+@property (nonatomic, strong) UIImageView *caStarImageView;
+@property (nonatomic, strong) CAEmitterLayer *caStarEmitter;
 
 @end
 
@@ -25,19 +32,32 @@
     if (self) {
         self.view.backgroundColor = [UIColor colorWithRed:0.57 green:0.66 blue:0.74 alpha:1];
         
-        self.fireButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        self.fireButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.fireButton setTitle:@"Touch Here" forState:UIControlStateNormal];
-        [self.fireButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [self.fireButton setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.3f]];
-        [self.fireButton setTintColor:[UIColor grayColor]];
-        [self.fireButton addTarget:self action:@selector(fireTouched) forControlEvents:UIControlEventTouchUpInside];
+        self.fireSpriteKitButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.fireSpriteKitButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.fireSpriteKitButton setTitle:@"Sprite Kit" forState:UIControlStateNormal];
+        [self.fireSpriteKitButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [self.fireSpriteKitButton setBackgroundColor:[[UIColor whiteColor] colorWithAlphaComponent:0.3f]];
+        [self.fireSpriteKitButton setTintColor:[UIColor grayColor]];
+        [self.fireSpriteKitButton addTarget:self action:@selector(shootOffSpriteKitStarFromView:) forControlEvents:UIControlEventTouchUpInside];
         
-        [self.view addSubview:self.fireButton];
+        self.fireCoreAnimationButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.fireCoreAnimationButton.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.fireCoreAnimationButton setTitle:@"Core Animation" forState:UIControlStateNormal];
+        [self.fireCoreAnimationButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+        [self.fireCoreAnimationButton setBackgroundColor:[[UIColor redColor] colorWithAlphaComponent:0.3f]];
+        [self.fireCoreAnimationButton setTintColor:[UIColor grayColor]];
+        [self.fireCoreAnimationButton addTarget:self action:@selector(shootOffCoreAnimationStarFromView:) forControlEvents:UIControlEventTouchUpInside];
         
-        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_fireButton(100)]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_fireButton)]];
+        [self.view addSubview:self.fireSpriteKitButton];
+        [self.view addSubview:self.fireCoreAnimationButton];
+
+        NSDictionary *views = NSDictionaryOfVariableBindings(_fireSpriteKitButton, _fireCoreAnimationButton);
         
-        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_fireButton]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_fireButton)]];
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_fireSpriteKitButton(100)]|" options:0 metrics:nil views:views]];
+        
+        [NSLayoutConstraint activateConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_fireSpriteKitButton][_fireCoreAnimationButton]|" options:NSLayoutFormatAlignAllBottom|NSLayoutFormatAlignAllTop metrics:nil views:views]];
+        
+        [NSLayoutConstraint activateConstraints:@[[NSLayoutConstraint constraintWithItem:self.fireCoreAnimationButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.fireSpriteKitButton attribute:NSLayoutAttributeWidth multiplier:1 constant:0]]];
     }
     
     return self;
@@ -48,18 +68,17 @@
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-- (void)fireTouched {
-    [self addToBasketAnimationFromView:self.fireButton];
+- (void)fireTouched:(id)sender {
+    [self shootOffSpriteKitStarFromView:sender];
 }
 
-- (void)addToBasketAnimationFromView:(UIView *)view {
+- (void)shootOffSpriteKitStarFromView:(UIView *)view {
     CGPoint viewOrigin;
     
-    CGRect frame = [self.view convertRect:view.frame fromView:view];
-    viewOrigin.y = 20;
-    viewOrigin.x = (frame.size.width / 2) / 2;
+    viewOrigin.y = 0;
+    viewOrigin.x = (view.frame.origin.x + (view.frame.size.width / 2)) / SCREEN_SCALE;
     
-    UIView *containerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    UIView *containerView = [[UIView alloc] initWithFrame:self.view.bounds];
     containerView.userInteractionEnabled = NO;
     
     SKView *skView = [[SKView alloc] initWithFrame:containerView.frame];
@@ -67,7 +86,7 @@
     [containerView addSubview:skView];
     
     SKScene *skScene = [SKScene sceneWithSize:skView.frame.size];
-    skScene.scaleMode = SKSceneScaleModeAspectFill;
+    skScene.scaleMode = SKSceneScaleModeFill;
     skScene.backgroundColor = [UIColor clearColor];
     
     SKSpriteNode *starSprite = [SKSpriteNode spriteNodeWithImageNamed:@"filled_star"];
@@ -76,28 +95,30 @@
     [skScene addChild:starSprite];
     
     SKEmitterNode *emitter =  [NSKeyedUnarchiver unarchiveObjectWithFile:[[NSBundle mainBundle] pathForResource:@"StarParticle" ofType:@"sks"]];
-    //SKEmitterNode *dotEmitter =  [NSKeyedUnarchiver unarchiveObjectWithFile:[[NSBundle mainBundle] pathForResource:@"DotParticle" ofType:@"sks"]];
+    SKEmitterNode *dotEmitter =  [NSKeyedUnarchiver unarchiveObjectWithFile:[[NSBundle mainBundle] pathForResource:@"Asterisk" ofType:@"sks"]];
+    
+    [dotEmitter setParticlePosition:CGPointMake(0, -starSprite.size.height)];
     [emitter setParticlePosition:CGPointMake(0, -starSprite.size.height)];
+
     emitter.targetNode = skScene;
-    //dotEmitter.targetNode = skScene;
+    dotEmitter.targetNode = skScene;
     
     [starSprite addChild:emitter];
-    //[starSprite addChild:dotEmitter];
+    [starSprite addChild:dotEmitter];
     
     [skView presentScene:skScene];
     
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathMoveToPoint(path, NULL, viewOrigin.x, viewOrigin.y);
     
-    CGPoint endPoint = CGPointMake(0, self.view.frame.size.height + 100);
+    CGPoint endPoint = CGPointMake(self.view.frame.size.width / 2, self.view.frame.size.height + 100);
     UIBezierPath *bp = [UIBezierPath new];
     [bp moveToPoint:viewOrigin];
     
     // curvy path
-    //[bp addCurveToPoint:endPoint controlPoint1:CGPointMake(viewOrigin.x + 300, viewOrigin.y + 275) controlPoint2:CGPointMake(-400, skView.frame.size.height - 250)];
-    
-    [bp addCurveToPoint:endPoint controlPoint1:endPoint controlPoint2:endPoint];
-    
+    // control points "pull" the curve to that point on the screen. You should be smarter then just using magic numbers like below.
+    [bp addCurveToPoint:endPoint controlPoint1:CGPointMake(viewOrigin.x + 500, viewOrigin.y + 275) controlPoint2:CGPointMake(-200, skView.frame.size.height - 250)];
+        
     __weak typeof(containerView) weakView = containerView;
     SKAction *followline = [SKAction followPath:bp.CGPath asOffset:YES orientToPath:YES duration:3.0];
     
@@ -115,64 +136,47 @@
     [self.view addSubview:containerView];
 }
 
-/*
-- (void)addToBasketAnimationFdddromButton:(UIButton *)button {
-    UIImageView *imageViewForAnimation = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"main_star"]];
-    imageViewForAnimation.alpha = 1.0f;
-    CGRect imageFrame = imageViewForAnimation.frame;
+- (void)shootOffCoreAnimationStarFromView:(UIView *)view {
+    self.caStarImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"filled_star"]];
+    self.caStarImageView.alpha = 1.0f;
+    CGRect imageFrame = CGRectMake(self.caStarImageView.frame.origin.x, self.caStarImageView.frame.origin.y, 50, 50);
+    
     //Your image frame.origin from where the animation need to get start
-    CGPoint viewOrigin = imageViewForAnimation.frame.origin;
+    CGPoint viewOrigin = self.caStarImageView.frame.origin;
     
-    CGRect frame = [self.view convertRect:button.frame fromView:button];
-    viewOrigin.y = frame.origin.y + (frame.size.height / 2);
-    viewOrigin.x = frame.size.width / 2;
+    viewOrigin.y = self.view.frame.size.height;
+    viewOrigin.x = (view.frame.origin.x + (view.frame.size.width / 2));
     
-    imageViewForAnimation.frame = imageFrame;
-    imageViewForAnimation.layer.position = viewOrigin;
-    [self.view addSubview:imageViewForAnimation];
+    self.caStarImageView.frame = imageFrame;
+    self.caStarImageView.layer.position = viewOrigin;
+    [self.view addSubview:self.caStarImageView];
     
-    imageViewForAnimation.transform = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(90));
+    // need to rotate the image to get it on the right tangent
+    self.caStarImageView.transform = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(90));
     
-    //particles
-    CAEmitterLayer *emitter = [CAEmitterLayer new];
-    emitter.emitterPosition = CGPointMake((imageViewForAnimation.width / 2) - 5, imageViewForAnimation.height);
-    emitter.emitterShape = kCAEmitterLayerLine;
-    emitter.emitterZPosition = 10; // 3;
-    emitter.emitterSize = CGSizeMake(0.5, 0.5);
+    // particles emitters
+    self.caStarEmitter = [CAEmitterLayer new];
+    self.caStarEmitter.emitterPosition = CGPointMake((self.caStarImageView.frame.size.width / 2) - 5, self.caStarImageView.frame.size.height);
+    self.caStarEmitter.emitterShape = kCAEmitterLayerLine;
+    self.caStarEmitter.emitterZPosition = 10; // 3;
+    self.caStarEmitter.emitterSize = CGSizeMake(0.5, 0.5);
     
-    CAEmitterCell *star = [self makeEmitterCellWithShape:FPPDPAddToBasketAnimationShapeStar];
-    CAEmitterCell *star2 = [self makeEmitterCellWithShape:FPPDPAddToBasketAnimationShapeStar];
-    CAEmitterCell *star3 = [self makeEmitterCellWithShape:FPPDPAddToBasketAnimationShapeStar];
+    CAEmitterCell *star = [self makeEmitterCellWithShape:0];
+    CAEmitterCell *star2 = [self makeEmitterCellWithShape:0];
+    CAEmitterCell *star3 = [self makeEmitterCellWithShape:0];
     
-    CAEmitterCell *circle = [self makeEmitterCellWithShape:FPPDPAddToBasketAnimationShapeCircle];
-    CAEmitterCell *circle2 = [self makeEmitterCellWithShape:FPPDPAddToBasketAnimationShapeCircle];
-    CAEmitterCell *circle3 = [self makeEmitterCellWithShape:FPPDPAddToBasketAnimationShapeCircle];
+    CAEmitterCell *circle = [self makeEmitterCellWithShape:1];
+    CAEmitterCell *circle2 = [self makeEmitterCellWithShape:1];
+    CAEmitterCell *circle3 = [self makeEmitterCellWithShape:1];
     
-    emitter.emitterCells = @[star, star2, star3, circle, circle2, circle3];
-    [imageViewForAnimation.layer addSublayer:emitter];
-    // end particles
+    self.caStarEmitter.emitterCells = @[star, star2, star3, circle, circle2, circle3];
+    [self.caStarImageView.layer addSublayer:self.caStarEmitter];
     
     // Set up fade out effect
     CABasicAnimation *fadeOutAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
     [fadeOutAnimation setToValue:[NSNumber numberWithFloat:1.0]];
     fadeOutAnimation.fillMode = kCAFillModeForwards;
     fadeOutAnimation.removedOnCompletion = NO;
-    
-    // Rotate
-    //    CABasicAnimation *animation = [CABasicAnimation   animationWithKeyPath:@"transform.rotation.z"];
-    //    animation.duration = 0.7;
-    //    animation.additive = YES;
-    //    animation.removedOnCompletion = NO;
-    //    animation.fillMode = kCAFillModeForwards;
-    //    animation.fromValue = [NSNumber numberWithFloat:0];
-    //    animation.toValue = [NSNumber numberWithFloat:DEGREES_TO_RADIANS(90)];
-    //    [imageViewForAnimation.layer addAnimation:animation forKey:@"90rotation"];
-    
-    // Set up scaling
-    //    CABasicAnimation *resizeAnimation = [CABasicAnimation animationWithKeyPath:@"bounds.size"];
-    //    [resizeAnimation setToValue:[NSValue valueWithCGSize:CGSizeMake(40.0f, imageFrame.size.height * (40.0f / imageFrame.size.width))]];
-    //    resizeAnimation.fillMode = kCAFillModeForwards;
-    //    resizeAnimation.removedOnCompletion = NO;
     
     // Set up path movement
     CAKeyframeAnimation *pathAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
@@ -182,21 +186,14 @@
     pathAnimation.rotationMode = kCAAnimationRotateAuto;
     
     //Setting Endpoint of the animation
-    CGPoint endPoint = CGPointMake(self.navigationController.navigationBar.frame.size.width - 50, self.navigationController.navigationBar.frame.origin.y - 35);
-    CGMutablePathRef curvedPath = CGPathCreateMutable();
-    CGPathMoveToPoint(curvedPath, NULL, viewOrigin.x, viewOrigin.y);
-    
+    CGPoint endPoint = CGPointMake(self.view.frame.size.width, -100);
     UIBezierPath *bp = [UIBezierPath new];
     [bp moveToPoint:viewOrigin];
     
-    // curvy
-    //[bp addCurveToPoint:endPoint controlPoint1:CGPointMake(viewOrigin.x + 300, viewOrigin.y - 275) controlPoint2:CGPointMake(-200, 400)];
-    
-    // shooting star
-    [bp addCurveToPoint:endPoint controlPoint1:CGPointMake(viewOrigin.x - [self randFloatBetween:0 and:400], viewOrigin.y - [self randFloatBetween:225 and:325]) controlPoint2:endPoint];
+    // control points "pull" the curve to that point on the screen. You should be smarter then just using magic numbers like below.
+    [bp addCurveToPoint:endPoint controlPoint1:CGPointMake(endPoint.x - 400, endPoint.y + 200) controlPoint2:endPoint];
     
     pathAnimation.path = bp.CGPath;
-    CGPathRelease(curvedPath);
     
     CAAnimationGroup *group = [CAAnimationGroup animation];
     group.fillMode = kCAFillModeForwards;
@@ -204,12 +201,12 @@
     [group setAnimations:[NSArray arrayWithObjects:fadeOutAnimation, pathAnimation, nil]];
     group.duration = 2.3f;
     group.delegate = self;
-    [group setValue:imageViewForAnimation forKey:@"imageViewBeingAnimated"];
+    [group setValue:self.caStarImageView forKey:@"imageViewBeingAnimated"];
     
-    [imageViewForAnimation.layer addAnimation:group forKey:@"savingAnimation"];
+    [self.caStarImageView.layer addAnimation:group forKey:@"savingAnimation"];
 }
 
-- (CAEmitterCell *)makeEmitterCellWithShape:(FPPDPAddToBasketAnimationShape)shape {
+- (CAEmitterCell *)makeEmitterCellWithShape:(NSInteger)shape {
     CAEmitterCell *cell = [CAEmitterCell new];
     cell.velocity = [self randFloatBetween:125 and:200];
     cell.velocityRange = [self randFloatBetween:15 and:40];
@@ -217,22 +214,20 @@
     cell.emissionRange = M_PI_4;
     cell.spin = 2;
     cell.spinRange = 10;
-    cell.scaleRange = 0.5;
+    cell.scale = 0.2;
     cell.scaleSpeed = -0.05;
     
     cell.lifetime = [self randFloatBetween:0.3 and:0.75];
     cell.lifetimeRange = [self randFloatBetween:0.6 and:1.5];
     
-    if (shape == FPPDPAddToBasketAnimationShapeStar) {
-        cell.color = [UIColor fp_pink].CGColor;
-        cell.contents = (id)[[UIImage imageNamed:@"little_star"] CGImage];
-        cell.scaleRange = 0.5;
-        cell.scaleSpeed = -0.05;
+    if (shape == 0) {
+        cell.color = [UIColor yellowColor].CGColor;
+        cell.contents = (id)[[UIImage imageNamed:@"filled_star"] CGImage];
         cell.birthRate = 15;
     }
     else {
-        cell.color = [UIColor fp_meAccent].CGColor;
-        cell.contents = (id)[[UIImage imageNamed:@"anim_dot"] CGImage];
+        cell.color = [UIColor orangeColor].CGColor;
+        cell.contents = (id)[[UIImage imageNamed:@"asterisk_filled"] CGImage];
         cell.birthRate = 40;
     }
     
@@ -243,6 +238,20 @@
     float diff = high - low;
     return (((float) rand() / RAND_MAX) * diff) + low;
 }
-*/
+
+#pragma mark - Delegate
+- (void)animationDidStop:(CAAnimation *)animation finished:(BOOL)finished {
+    if (finished) {
+        // stop emitting particles, and wait a couple seconds so they all have time to disappear
+        self.caStarEmitter.birthRate = 0;
+        
+        __weak typeof(self) weakSelf = self;
+        int64_t delayInSeconds = 1.5;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [weakSelf.caStarImageView removeFromSuperview];
+        });
+    }
+}
 
 @end
