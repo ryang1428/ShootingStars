@@ -15,6 +15,7 @@ There are 2 ways to achieve a shooting star animation, which travels along a def
 - Performance wise, using Sprite Kit seems to lag much easier (at least with this example). For example, in the sample, try to shoot off 5 SpriteKit stars, and then shoot off 5 Core Animation stars. You'll notice a lot of lag on the SpriteKit star, but not much on the CoreAnimation star
 
 ##Core Animation Example
+![sprite-kit-star](http://i.imgur.com/FIXKVqG.gif)
 ###Advantages
 - You don't need to worry about thinking about converting coordinates to a points in a `SKScene`, or worry about adding a `SKView` on top of your current `UIView`
 - Performance (at least for this example) seems much better. You can shoot off many CA stars with little to no lag
@@ -23,5 +24,6 @@ There are 2 ways to achieve a shooting star animation, which travels along a def
 - Emitters do not have a nice playground where you can easily tweak settings and see the result real time. You must either keep restarting your app, or purchase an app that allows you to tweak settings and see the result real time.
 - Emitter particles, when attached to a `UIView`, follow the same path the `UIView` does, resulting in some ugly animations of your `UIView` does lots of turns with particles.
 
+##TODO:
+- Swift Example
 
-![sprite-kit-star](http://i.imgur.com/FIXKVqG.gif)
