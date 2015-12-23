@@ -11,7 +11,7 @@ There are 2 ways to achieve a shooting star animation, which travels along a def
 - End result seems much smoother
 
 ###Disadvantages
-- You must add a `SKView` and associated `SKScene` on top of your view. `SKScene`'s have very different coordinate systems than regular `UIView`s. Read more from Apple here. This means you may carefully translate coordinates from a `UIView` to a `SKScene`
+- You must add a `SKView` and associated `SKScene` on top of your view. `SKScene`'s have very different coordinate systems than regular `UIView`s. [Read more from Apple here](https://developer.apple.com/library/ios/documentation/GraphicsAnimation/Conceptual/SpriteKit_PG/Nodes/Nodes.html). This means you may carefully translate coordinates from a `UIView` to a `SKScene`
 - Performance wise, using Sprite Kit seems to lag much easier (at least with this example). For example, in the sample, try to shoot off 5 SpriteKit stars, and then shoot off 5 Core Animation stars. You'll notice a lot of lag on the SpriteKit star, but not much on the CoreAnimation star
 
 ##Core Animation Example
