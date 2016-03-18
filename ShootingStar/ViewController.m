@@ -87,7 +87,7 @@
     [skScene addChild:starSprite];
     
     SKEmitterNode *emitter =  [NSKeyedUnarchiver unarchiveObjectWithFile:[[NSBundle mainBundle] pathForResource:@"StarParticle" ofType:@"sks"]];
-    SKEmitterNode *dotEmitter =  [NSKeyedUnarchiver unarchiveObjectWithFile:[[NSBundle mainBundle] pathForResource:@"Asterisk" ofType:@"sks"]];
+    SKEmitterNode *dotEmitter =  [NSKeyedUnarchiver unarchiveObjectWithFile:[[NSBundle mainBundle] pathForResource:@"AsteriskParticle" ofType:@"sks"]];
     
     [dotEmitter setParticlePosition:CGPointMake(0, -starSprite.size.height)];
     [emitter setParticlePosition:CGPointMake(0, -starSprite.size.height)];
