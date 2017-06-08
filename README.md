@@ -3,7 +3,7 @@ Some fun Shooting Star animations built with both SpriteKit and CAEmitterLayer. 
 
 There are 2 ways to achieve a shooting star animation, which travels along a defined path while emitting particles. There are both some advantages, and disadvantages for each method.
 
-##Sprite Kit Example
+## Sprite Kit Example
 ![sprite-kit-star](http://i.imgur.com/AKS3AuT.gif)
 ### Advantages
 - Particle emitters are much more flexible. You can attach a `targetNode` to your sprite's emitter, which allows your particles to become independent of the sprite, thus not moving along the same path as the sprite. This is not as easily achievable using `CAEmitterLayer`
